@@ -33,6 +33,8 @@ const getCategoryById = async (req, res) => {
 const createCategory = async (req, res) => {
   const { category_name } = req.body;
 
+  console.log("Received Data Backend:", req.body);
+
   try {
     const newCategory = await Category.create({ category_name });
 

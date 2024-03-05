@@ -1,7 +1,7 @@
 // models/product.js
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
-const Category = require("./categoryModel"); // Import the Category model
+const Category = require("./categoryModel");
 
 const Product = sequelize.define("Product", {
   product_id: {
@@ -13,12 +13,24 @@ const Product = sequelize.define("Product", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  category_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: Category,
+      key: "category_id",
+    },
+  },
 });
 
-// Define the association
 Product.belongsTo(Category, {
   foreignKey: "category_id",
-  allowNull: false,
+  targetKey: "category_id",
+});
+
+Category.hasMany(Product, {
+  foreignKey: "category_id",
+  sourceKey: "category_id",
 });
 
 module.exports = Product;
