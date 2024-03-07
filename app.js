@@ -14,15 +14,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Sequelize Model
-
-// sequelize
-//   .sync({ force: true })
-//   .then(() => {
-//     console.log("Database and tables synced!");
-//   })
-//   .catch((error) => {
-//     console.error("Error syncing database:", error);
-//   });
 const Category = require("./src/models/categoryModel");
 const Product = require("./src/models/productModel");
 

@@ -1,18 +1,6 @@
-// controllers/productController.js
 const Category = require("../models/categoryModel");
 const Product = require("../models/productModel");
 
-// Get all products
-// const getAllProducts = async (req, res) => {
-//   try {
-//     const products = await Product.findAll();
-//     console.log(products);
-//     res.json(products);
-//   } catch (error) {
-//     console.error("Error fetching products:", error);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// };
 const getAllProducts = async (req, res) => {
   try {
     const products = await Product.findAll({
@@ -23,7 +11,6 @@ const getAllProducts = async (req, res) => {
         },
       ],
     });
-    console.log("Products", products);
 
     const formattedProducts = products.map((product) => {
       return {
@@ -37,8 +24,6 @@ const getAllProducts = async (req, res) => {
         },
       };
     });
-
-    console.log("Formatted Products:", formattedProducts);
 
     res.json(formattedProducts);
   } catch (error) {
@@ -122,10 +107,50 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+// Controller function for paginated product retrieval
+const getPaginatedProducts = async (req, res) => {
+  try {
+    const { page = 1, pageSize = 10 } = req.query;
+
+    // Calculate offset based on page number and page size
+    const offset = (page - 1) * pageSize;
+
+    // Fetch products with pagination
+    const products = await Product.findAll({
+      include: [
+        {
+          model: Category,
+          attributes: ["category_id", "category_name"],
+        },
+      ],
+      limit: parseInt(pageSize),
+      offset: parseInt(offset),
+    });
+
+    const totalProducts = await Product.count();
+
+    const totalPages = Math.ceil(totalProducts / pageSize);
+
+    const response = {
+      currentPage: parseInt(page),
+      totalPages,
+      pageSize: parseInt(pageSize),
+      totalProducts,
+      products,
+    };
+
+    res.json(response);
+  } catch (error) {
+    console.error("Error fetching paginated products:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 module.exports = {
   getAllProducts,
   getProductById,
   createProduct,
   updateProduct,
   deleteProduct,
+  getPaginatedProducts,
 };
